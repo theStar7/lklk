@@ -141,29 +141,108 @@ body {
     bottom: 0;
     left: 0;
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
+    background: rgba(20, 20, 20, 0.95);
+    backdrop-filter: blur(10px);
     padding: 1rem 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.6);
     z-index: 1000;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.global-player audio {
-    width: 80%;
-    max-width: 600px;
-    margin-bottom: 0.5rem;
+.custom-player-ui {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 0.8rem;
+    gap: 1.5rem;
+}
+
+.control-btn {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.control-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+    color: #fff;
+}
+
+.progress-area {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    font-family: monospace;
+}
+
+.progress-container {
+    flex-grow: 1;
+    height: 6px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+    transition: height 0.2s ease;
+}
+
+.progress-container:hover {
+    height: 10px;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), #ff9a9e);
+    border-radius: 3px;
+    position: relative;
+    transition: width 0.1s linear;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%) scale(0);
+    width: 12px;
+    height: 12px;
+    background-color: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s ease;
+}
+
+.progress-container:hover .progress-bar::after {
+    transform: translateY(-50%) scale(1);
 }
 
 .current-track-info {
     color: var(--text-light);
-    font-size: 1.1rem;
+    font-size: 1rem;
+    opacity: 0.8;
 }
 
 #currentTrackTitle {
     color: var(--primary-color);
     font-weight: bold;
+    margin-left: 0.5rem;
 }
 
 /* 响应式设计 */

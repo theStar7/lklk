@@ -6,7 +6,7 @@
     <title>路途中的聆听 - 探索世界音乐之美</title>
     <link rel="stylesheet" href="../css/M.css">
     <link rel="stylesheet" href="../css/M_Listen.css"> <!-- 专门为聆听页面创建的CSS文件 -->
- 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <header class="main-header">
@@ -65,7 +65,20 @@
 
         <!-- 全局音乐播放器 -->
         <div class="global-player">
-            <audio id="audioPlayer" controls></audio>
+            <audio id="audioPlayer"></audio>
+            
+            <div class="custom-player-ui">
+                <button id="playPauseBtn" class="control-btn"><i class="fas fa-play"></i></button>
+                
+                <div class="progress-area">
+                    <span id="currentTime">0:00</span>
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    <span id="duration">0:00</span>
+                </div>
+            </div>
+
             <div class="current-track-info">
                 正在播放：<span id="currentTrackTitle">选择一首音乐</span>
             </div>
