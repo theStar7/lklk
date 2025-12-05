@@ -60,6 +60,17 @@
     100% { background-position: 0% 50%; }
 }
 
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 /* 主体容器 */
 .era-page {
     min-height: 100vh;
@@ -278,23 +289,25 @@
     font-size: 3rem;
     color: var(--primary-color);
     margin-bottom: 1rem;
+    display: inline-block;
     transition: transform 0.3s ease;
 }
 
 .feature-card:hover .feature-icon {
-    transform: scale(1.2) rotate(10deg);
+    transform: rotate(360deg) scale(1.2);
 }
 
 .feature-card h3 {
     font-size: 1.3rem;
     color: var(--primary-color);
     margin-bottom: 1rem;
+    font-weight: bold;
 }
 
 .feature-card p {
     color: var(--text-light);
     line-height: 1.6;
-    font-size: 0.95rem;
+    font-size: 1rem;
 }
 
 /* 音乐家展示 */
@@ -305,23 +318,32 @@
 }
 
 .composer-card {
-    background: rgba(25, 25, 25, 0.9);
+    background: linear-gradient(135deg, rgba(30, 30, 30, 0.9), rgba(50, 50, 50, 0.8));
+    border: 1px solid rgba(224, 180, 103, 0.3);
     border-radius: 20px;
+    padding: 2rem;
+    transition: all 0.4s ease;
     overflow: hidden;
-    transition: all 0.5s ease;
-    position: relative;
 }
 
 .composer-card:hover {
     transform: translateY(-15px);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+    border-color: var(--primary-color);
 }
 
 .composer-image {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-    transition: transform 0.5s ease;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: rgba(224, 180, 103, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: var(--primary-color);
+    margin: 0 auto 1.5rem;
+    border: 3px solid var(--primary-color);
 }
 
 .composer-card:hover .composer-image {
@@ -329,53 +351,64 @@
 }
 
 .composer-image-wrapper {
-    overflow: hidden;
     position: relative;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
 }
 
 .composer-image-wrapper::after {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 50%;
-    background: linear-gradient(transparent, rgba(25, 25, 25, 1));
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 2px dashed var(--primary-color);
+    opacity: 0;
+    animation: pulse 2s ease-in-out infinite;
+    pointer-events: none;
 }
 
 .composer-info {
-    padding: 1.5rem 2rem 2rem;
-    position: relative;
+    text-align: center;
 }
 
 .composer-name {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
+    font-weight: bold;
     color: var(--primary-color);
     margin-bottom: 0.3rem;
 }
 
 .composer-years {
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.95rem;
+    color: var(--text-light);
+    opacity: 0.7;
     margin-bottom: 1rem;
 }
 
 .composer-desc {
+    font-size: 1rem;
     color: var(--text-light);
-    line-height: 1.6;
-    font-size: 0.95rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
 }
 
 .composer-works {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: left;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 1rem;
+    border-radius: 10px;
 }
 
 .composer-works h4 {
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: var(--primary-color);
-    margin-bottom: 0.5rem;
+    margin: 0 0 0.8rem 0;
+    font-weight: bold;
 }
 
 .composer-works ul {
@@ -386,59 +419,61 @@
 
 .composer-works li {
     color: var(--text-light);
-    font-size: 0.85rem;
-    padding: 0.2rem 0;
-    opacity: 0.8;
+    padding: 0.3rem 0;
+    font-size: 0.95rem;
 }
 
 .composer-works li::before {
     content: '♪ ';
     color: var(--primary-color);
+    margin-right: 0.5rem;
 }
 
 /* 乐器展示 */
 .instruments-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 2rem;
 }
 
 .instrument-item {
     background: rgba(30, 30, 30, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 50px;
-    padding: 1rem 2rem;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    transition: all 0.3s ease;
+    border: 1px solid rgba(224, 180, 103, 0.3);
+    border-radius: 15px;
+    padding: 2rem 1rem;
+    text-align: center;
     cursor: pointer;
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .instrument-item:hover {
-    background: var(--primary-color);
-    transform: scale(1.1);
-    box-shadow: 0 10px 25px rgba(224, 180, 103, 0.3);
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 15px 30px rgba(224, 180, 103, 0.3);
+    border-color: var(--primary-color);
 }
 
 .instrument-item:hover span {
-    color: var(--bg-dark);
+    color: var(--primary-color);
 }
 
 .instrument-item:hover i {
-    color: var(--bg-dark);
+    transform: scale(1.3) rotate(15deg);
 }
 
 .instrument-item i {
-    font-size: 1.5rem;
+    font-size: 2.5rem;
     color: var(--primary-color);
-    transition: color 0.3s ease;
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease;
 }
 
 .instrument-item span {
     color: var(--text-light);
-    font-size: 1rem;
+    font-weight: bold;
     transition: color 0.3s ease;
 }
 
@@ -447,119 +482,128 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 3rem 2rem;
     max-width: 1200px;
-    margin: 0 auto;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 3rem auto;
+    padding: 0 2rem;
+    gap: 2rem;
 }
 
 .nav-era {
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 1rem 2rem;
+    padding: 1.5rem 2rem;
     background: rgba(30, 30, 30, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
+    border: 1px solid rgba(224, 180, 103, 0.3);
+    border-radius: 15px;
     text-decoration: none;
-    transition: all 0.3s ease;
-    min-width: 200px;
+    color: var(--text-light);
+    transition: all 0.4s ease;
+    flex: 1;
 }
 
 .nav-era:hover {
+    background: rgba(50, 50, 50, 0.9);
     border-color: var(--primary-color);
-    transform: translateY(-5px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    transform: translateY(-5px);
 }
 
 .nav-era.prev:hover {
-    transform: translateX(-10px);
+    transform: translateX(-5px) translateY(-5px);
 }
 
 .nav-era.next:hover {
-    transform: translateX(10px);
+    transform: translateX(5px) translateY(-5px);
 }
 
 .nav-era .nav-label {
     font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--text-light);
+    opacity: 0.7;
 }
 
 .nav-era .nav-title {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     color: var(--primary-color);
+    font-weight: bold;
 }
 
 .nav-era i {
     font-size: 1.5rem;
     color: var(--primary-color);
+    transition: transform 0.3s ease;
 }
 
 .nav-era.prev {
-    text-align: left;
+    justify-content: flex-start;
 }
 
 .nav-era.next {
-    text-align: right;
-    flex-direction: row-reverse;
+    justify-content: flex-end;
 }
 
 /* 音频播放器 */
 .audio-showcase {
-    background: linear-gradient(135deg, rgba(30, 30, 30, 0.95), rgba(40, 40, 40, 0.9));
-    border: 1px solid rgba(224, 180, 103, 0.3);
-    border-radius: 20px;
-    padding: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
 }
 
 .audio-item {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 1.5rem;
-    background: rgba(20, 20, 20, 0.5);
+    background: linear-gradient(135deg, rgba(30, 30, 30, 0.9), rgba(50, 50, 50, 0.8));
+    border: 1px solid rgba(224, 180, 103, 0.3);
     border-radius: 15px;
-    margin-bottom: 1rem;
-    transition: all 0.3s ease;
+    padding: 2rem;
+    display: flex;
+    gap: 1.5rem;
+    transition: all 0.4s ease;
+    align-items: center;
 }
 
 .audio-item:last-child {
-    margin-bottom: 0;
+    grid-column: auto;
 }
 
 .audio-item:hover {
-    background: rgba(224, 180, 103, 0.1);
-    transform: translateX(10px);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    border-color: var(--primary-color);
 }
 
 .play-btn {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
-    background: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-color), #ff9a9e);
     border: none;
     color: var(--bg-dark);
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     cursor: pointer;
-    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(224, 180, 103, 0.3);
 }
 
 .play-btn:hover {
     transform: scale(1.1);
-    box-shadow: 0 5px 20px rgba(224, 180, 103, 0.5);
+    box-shadow: 0 8px 25px rgba(224, 180, 103, 0.5);
 }
 
 .audio-info h4 {
-    color: var(--text-light);
-    margin-bottom: 0.3rem;
+    font-size: 1.15rem;
+    color: var(--primary-color);
+    margin: 0 0 0.5rem 0;
 }
 
 .audio-info p {
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    color: var(--text-light);
+    margin: 0;
+    line-height: 1.5;
 }
 
 /* 滚动指示器 */
@@ -568,40 +612,42 @@
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
-    animation: float 2s ease-in-out infinite;
+    cursor: pointer;
 }
 
 .scroll-indicator i {
     font-size: 2rem;
     color: var(--primary-color);
-    opacity: 0.7;
+    animation: bounce 2s infinite;
 }
 
 /* 装饰元素 */
 .decorative-notes {
     position: absolute;
-    font-size: 3rem;
-    color: var(--primary-color);
-    opacity: 0.1;
-    animation: float 4s ease-in-out infinite;
+    font-size: 4rem;
+    color: rgba(224, 180, 103, 0.1);
+    pointer-events: none;
+    z-index: 0;
 }
 
 .decorative-notes.note-1 {
     top: 20%;
-    left: 10%;
-    animation-delay: 0s;
+    left: 5%;
+    animation: float 6s ease-in-out infinite;
 }
 
 .decorative-notes.note-2 {
-    top: 30%;
-    right: 15%;
+    top: 60%;
+    right: 10%;
+    animation: float 8s ease-in-out infinite;
     animation-delay: 1s;
 }
 
 .decorative-notes.note-3 {
-    bottom: 25%;
-    left: 20%;
-    animation-delay: 2s;
+    bottom: 20%;
+    left: 15%;
+    animation: float 7s ease-in-out infinite;
+    animation-delay: 0.5s;
 }
 
 /* 响应式设计 */
@@ -609,64 +655,87 @@
     .era-title {
         font-size: 3rem;
     }
-    
-    .era-hero {
-        height: 60vh;
+    .section-title {
+        font-size: 2rem;
     }
-    
-    .back-nav {
-        top: 90px;
-        left: 15px;
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
-    
-    .era-navigation {
-        flex-direction: column;
-        gap: 1rem;
+    .composers-showcase {
+        grid-template-columns: 1fr;
     }
-    
-    .nav-era {
-        width: 100%;
-        justify-content: center;
+    .audio-showcase {
+        grid-template-columns: 1fr;
     }
 }
 
 @media (max-width: 768px) {
+    .era-hero {
+        height: 50vh;
+        min-height: 400px;
+    }
+    .era-icon {
+        font-size: 3.5rem;
+    }
     .era-title {
         font-size: 2.5rem;
     }
-    
     .era-period {
         font-size: 1.2rem;
     }
-    
-    .section-title {
-        font-size: 2rem;
+    .era-tagline {
+        font-size: 1rem;
     }
-    
     .era-content {
         padding: 2rem 1rem;
     }
-    
+    .section-title {
+        font-size: 1.8rem;
+    }
     .features-grid {
         grid-template-columns: 1fr;
     }
-    
-    .composers-showcase {
-        grid-template-columns: 1fr;
+    .instruments-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .era-navigation {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .nav-era {
+        width: 100%;
+    }
+    .back-nav {
+        left: 1rem;
     }
 }
 
 @media (max-width: 480px) {
-    .era-title {
-        font-size: 2rem;
+    .era-hero {
+        height: auto;
+        min-height: 300px;
+        padding: 2rem;
     }
-    
     .era-icon {
-        font-size: 3.5rem;
+        font-size: 2.5rem;
     }
-    
-    .back-link {
-        padding: 0.6rem 1rem;
+    .era-title {
+        font-size: 1.8rem;
+    }
+    .era-period {
+        font-size: 1rem;
+    }
+    .era-tagline {
         font-size: 0.9rem;
     }
+    .section-title {
+        font-size: 1.5rem;
+    }
+    .instruments-container {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
+    .decorative-notes {
+        font-size: 2.5rem;
+    }
 }
+
