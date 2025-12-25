@@ -100,8 +100,8 @@ body {
     top: 80px;
     left: 50%;
     transform: translateX(-50%);
-    width: 70%;
-    max-width: 900px;
+    width: 75%;
+    max-width: 950px;
     height: calc(100% - 220px);
     overflow: hidden;
 }
@@ -109,8 +109,8 @@ body {
 .track-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(6, auto);
-    gap: 12px;
+    grid-auto-rows: minmax(45px, auto);
+    gap: 10px 15px;
     padding: 10px;
 }
 
@@ -118,12 +118,16 @@ body {
     background: linear-gradient(135deg, rgba(40, 80, 100, 0.7), rgba(30, 60, 80, 0.8));
     border: 1px solid rgba(100, 180, 180, 0.4);
     border-radius: 5px;
-    padding: 12px 15px;
+    padding: 10px 8px;
     cursor: pointer;
     transition: all 0.3s ease;
     text-align: center;
     position: relative;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 45px;
 }
 
 .track-item::before {
@@ -156,9 +160,14 @@ body {
 }
 
 .track-name {
-    font-size: 14px;
+    font-size: 13px;
     color: #c5f0ef;
     text-shadow: 0 0 5px rgba(127, 219, 218, 0.3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    line-height: 1.4;
 }
 
 .track-item.active .track-name {
@@ -342,13 +351,17 @@ body {
 }
 
 /* ========== 响应式布局 ========== */
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
     .track-grid {
         grid-template-columns: repeat(3, 1fr);
     }
+    
+    .track-list-container {
+        width: 85%;
+    }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
     .track-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -356,5 +369,11 @@ body {
     .track-info {
         flex-direction: column;
         gap: 5px;
+    }
+}
+
+@media (max-width: 450px) {
+    .track-grid {
+        grid-template-columns: 1fr;
     }
 }

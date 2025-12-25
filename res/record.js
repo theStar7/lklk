@@ -29,32 +29,39 @@ let isShuffling = false;
 let mouseTimer = null;
 let isMouseIdle = false;
 
-// ========== 曲目数据（请在此修改作曲家信息） ==========
+// ========== CG轮播相关变量 ==========
+let cgTimer = null;           // CG轮播定时器
+let currentCgIndex = 0;       // 当前CG索引
+let currentCgFolder = '';     // 当前CG文件夹路径
+const cgInterval = 5000;      // CG切换间隔（毫秒），可修改
+
+// ========== 曲目数据（请在此修改作曲家信息和CG数量） ==========
+// cgCount: 该曲目文件夹内的CG图片数量
 const trackData = [
-    { composer: "贝多芬" },
-    { composer: "维瓦尔第" },
-    { composer: "帕赫贝尔" },
-    { composer: "贝多芬" },
-    { composer: "柴可夫斯基" },
-    { composer: "贝多芬" },
-    { composer: "小约翰·施特劳斯" },
-    { composer: "莫扎特" },
-    { composer: "巴赫" },
-    { composer: "贝多芬" },
-    { composer: "舒曼" },
-    { composer: "里姆斯基-科萨科夫" },
-    { composer: "舒伯特" },
-    { composer: "勃拉姆斯" },
-    { composer: "小约翰·施特劳斯" },
-    { composer: "李斯特" },
-    { composer: "肖邦" },
-    { composer: "肖邦" },
-    { composer: "肖邦" },
-    { composer: "肖邦" },
-    { composer: "李斯特" },
-    { composer: "拉威尔" },
-    { composer: "柴可夫斯基" },
-    { composer: "柴可夫斯基" }
+    { composer: "贝多芬", cgCount: 3 },
+    { composer: "维瓦尔第", cgCount: 3 },
+    { composer: "帕赫贝尔", cgCount: 3 },
+    { composer: "贝多芬", cgCount: 3 },
+    { composer: "柴可夫斯基", cgCount: 3 },
+    { composer: "贝多芬", cgCount: 3 },
+    { composer: "小约翰·施特劳斯", cgCount: 3 },
+    { composer: "莫扎特", cgCount: 3 },
+    { composer: "巴赫", cgCount: 3 },
+    { composer: "贝多芬", cgCount: 3 },
+    { composer: "舒曼", cgCount: 3 },
+    { composer: "里姆斯基-科萨科夫", cgCount: 3 },
+    { composer: "舒伯特", cgCount: 3 },
+    { composer: "勃拉姆斯", cgCount: 3 },
+    { composer: "小约翰·施特劳斯", cgCount: 3 },
+    { composer: "李斯特", cgCount: 3 },
+    { composer: "肖邦", cgCount: 3 },
+    { composer: "肖邦", cgCount: 3 },
+    { composer: "肖邦", cgCount: 3 },
+    { composer: "肖邦", cgCount: 3 },
+    { composer: "李斯特", cgCount: 3 },
+    { composer: "拉威尔", cgCount: 3 },
+    { composer: "柴可夫斯基", cgCount: 3 },
+    { composer: "柴可夫斯基", cgCount: 3 }
 ];
 
 // ========== 初始化 ==========
@@ -107,9 +114,9 @@ function playTrack(index) {
     const trackItem = trackItems[index];
     trackItem.classList.add('active');
     
-    // 获取音频和CG路径
+    // 获取音频和CG文件夹路径
     const audioSrc = trackItem.dataset.audio;
-    const cgSrc = trackItem.dataset.cg;
+    const cgFolder = trackItem.dataset.cg;  // 现在是文件夹路径
     const trackName = trackItem.querySelector('.track-name').textContent;
     
     // 播放音频
@@ -122,8 +129,47 @@ function playTrack(index) {
     trackTitleEl.textContent = trackName;
     composerNameEl.textContent = trackData[index]?.composer || '--';
     
-    // 切换背景CG（渐变效果）
-    changeBgCG(cgSrc);
+    // 开始CG轮播
+    startCgSlideshow(cgFolder, index);
+}
+
+// ========== 开始CG轮播 ==========
+function startCgSlideshow(cgFolder, trackIndex) {
+    // 停止之前的轮播
+    stopCgSlideshow();
+    
+    // 设置当前CG文件夹和索引
+    currentCgFolder = cgFolder;
+    currentCgIndex = 0;
+    
+    // 获取该曲目的CG数量
+    const cgCount = trackData[trackIndex]?.cgCount || 1;
+    
+    // 显示第一张CG
+    showCg(currentCgIndex);
+    
+    // 如果有多张CG，启动轮播
+    if (cgCount > 1) {
+        cgTimer = setInterval(() => {
+            currentCgIndex = (currentCgIndex + 1) % cgCount;
+            showCg(currentCgIndex);
+        }, cgInterval);
+    }
+}
+
+// ========== 停止CG轮播 ==========
+function stopCgSlideshow() {
+    if (cgTimer) {
+        clearInterval(cgTimer);
+        cgTimer = null;
+    }
+}
+
+// ========== 显示指定索引的CG ==========
+function showCg(index) {
+    // CG图片命名规则：1.jpg, 2.jpg, 3.jpg...
+    const cgPath = currentCgFolder + '/' + (index + 1) + '.jpg';
+    changeBgCG(cgPath);
 }
 
 // ========== 切换背景CG ==========
@@ -160,6 +206,9 @@ function stopTrack() {
     audioPlayer.currentTime = 0;
     isPlaying = false;
     playBtn.textContent = '▶';
+    
+    // 停止CG轮播
+    stopCgSlideshow();
     
     // 清除CG
     bgImage.classList.remove('show');
