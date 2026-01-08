@@ -46,16 +46,30 @@ PHOTO_CATEGORIES.forEach(cat => {
 // 去重
 const uniquePhotoList = [...new Set(PHOTO_LIST)];
 
-// ========== DOM元素 ==========
-const photoGrid = document.getElementById('photoGrid');
-const categoryList = document.getElementById('categoryList');
-const lightbox = document.getElementById('lightbox');
-const lightboxImg = document.getElementById('lightboxImg');
-const closeBtn = document.getElementById('closeBtn');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
-const imageIndex = document.getElementById('imageIndex');
-const imageTotal = document.getElementById('imageTotal');
+// ========== DOM元素缓存 ==========
+const DOM = {
+    photoGrid: document.getElementById('photoGrid'),
+    categoryList: document.getElementById('categoryList'),
+    lightbox: document.getElementById('lightbox'),
+    lightboxImg: document.getElementById('lightboxImg'),
+    closeBtn: document.getElementById('closeBtn'),
+    prevBtn: document.getElementById('prevBtn'),
+    nextBtn: document.getElementById('nextBtn'),
+    imageIndex: document.getElementById('imageIndex'),
+    imageTotal: document.getElementById('imageTotal'),
+    body: document.body
+};
+
+// 简化使用（保持向后兼容）
+const photoGrid = DOM.photoGrid;
+const categoryList = DOM.categoryList;
+const lightbox = DOM.lightbox;
+const lightboxImg = DOM.lightboxImg;
+const closeBtn = DOM.closeBtn;
+const prevBtn = DOM.prevBtn;
+const nextBtn = DOM.nextBtn;
+const imageIndex = DOM.imageIndex;
+const imageTotal = DOM.imageTotal;
 
 // ========== 状态变量 ==========
 let currentIndex = 0;
@@ -72,6 +86,8 @@ function init() {
 
 // ========== 加载分区列表 ==========
 function loadCategories() {
+    const fragment = document.createDocumentFragment();
+    
     PHOTO_CATEGORIES.forEach((cat, index) => {
         const li = document.createElement('li');
         li.className = 'category-item';
@@ -79,9 +95,29 @@ function loadCategories() {
         li.textContent = cat.category;
         li.dataset.category = cat.photos === 'all' ? 'all' : cat.category;
         
-        li.addEventListener('click', () => filterByCategory(cat, li));
+        // 使用事件委托替代单个监听器
+        li.dataset.category = cat.photos === 'all' ? 'all' : cat.category;
         
-        categoryList.appendChild(li);
+        fragment.appendChild(li);
+    });
+    
+    // 批量添加元素，减少重排
+    categoryList.appendChild(fragment);
+    
+    // 使用事件委托处理分类点击
+    categoryList.addEventListener('click', (e) => {
+        const categoryItem = e.target.closest('.category-item');
+        if (!categoryItem) return;
+        
+        const categoryName = categoryItem.dataset.category;
+        const category = PHOTO_CATEGORIES.find(cat => 
+            (cat.photos === 'all' && categoryName === 'all') || 
+            (cat.photos !== 'all' && cat.category === categoryName)
+        );
+        
+        if (category) {
+            filterByCategory(category, categoryItem);
+        }
     });
 }
 
@@ -96,6 +132,21 @@ async function loadPhotos() {
     // 清空网格
     photoGrid.innerHTML = '';
     allPhotoElements = [];
+    
+// ========== 加载照片 ==========
+async function loadPhotos() {
+    // 使用去重后的照片列表
+    photos = uniquePhotoList.map(filename => `${PHOTO_FOLDER}/${filename}`);
+    
+    // 更新总数
+    imageTotal.textContent = photos.length;
+    
+    // 清空网格
+    photoGrid.innerHTML = '';
+    allPhotoElements = [];
+    
+    // 使用DocumentFragment批量插入，减少重排
+    const fragment = document.createDocumentFragment();
     
     // 生成缩略图
     for (let index = 0; index < uniquePhotoList.length; index++) {
@@ -134,21 +185,32 @@ async function loadPhotos() {
         hoverPreview.appendChild(description);
         photoItem.appendChild(hoverPreview);
         
-        photoGrid.appendChild(photoItem);
+        fragment.appendChild(photoItem);
         allPhotoElements.push(photoItem);
-        
-        // 点击事件
-        photoItem.addEventListener('click', () => openLightbox(index));
         
         // 异步加载描述文本
         loadDescription(filename, description);
     }
+    
+    // 一次性添加所有元素，减少重排次数
+    photoGrid.appendChild(fragment);
+    
+    // 使用事件委托处理照片点击
+    photoGrid.addEventListener('click', (e) => {
+        const photoItem = e.target.closest('.photo-item');
+        if (photoItem) {
+            const index = parseInt(photoItem.dataset.index);
+            openLightbox(index);
+        }
+    });
+}
 }
 
 // ========== 按分区过滤照片 ==========
 function filterByCategory(category, clickedItem) {
-    // 更新分区选中状态
-    document.querySelectorAll('.category-item').forEach(item => {
+    // 更新分区选中状态 - 优化：使用更高效的方式
+    const categoryItems = DOM.categoryList.querySelectorAll('.category-item');
+    categoryItems.forEach(item => {
         item.classList.remove('active');
     });
     clickedItem.classList.add('active');
@@ -161,17 +223,13 @@ function filterByCategory(category, clickedItem) {
         });
         photos = uniquePhotoList.map(filename => `${PHOTO_FOLDER}/${filename}`);
     } else {
-        // 只显示该分区的照片
-        const categoryPhotos = category.photos;
+        // 只显示该分区的照片 - 优化：构建Set以提高查询速度
+        const categoryPhotosSet = new Set(category.photos);
         allPhotoElements.forEach(item => {
             const filename = item.dataset.filename;
-            if (categoryPhotos.includes(filename)) {
-                item.style.display = 'block';
-            } else {
-                item.style.display = 'none';
-            }
+            item.style.display = categoryPhotosSet.has(filename) ? 'block' : 'none';
         });
-        photos = categoryPhotos.map(filename => `${PHOTO_FOLDER}/${filename}`);
+        photos = category.photos.map(filename => `${PHOTO_FOLDER}/${filename}`);
     }
     
     // 更新总数
@@ -227,13 +285,13 @@ function openLightbox(index) {
     currentIndex = index;
     updateLightboxImage();
     lightbox.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    DOM.body.style.overflow = 'hidden';
 }
 
 // ========== 关闭大图查看器 ==========
 function closeLightbox() {
     lightbox.classList.remove('active');
-    document.body.style.overflow = 'auto';
+    DOM.body.style.overflow = 'auto';
 }
 
 // ========== 更新大图 ==========
